@@ -1,0 +1,3 @@
+from Spotfire.Dxp.Data import CalculatedColumn
+cols = Document.Data.Tables["TIBER"].Columns
+cols.AddCalculatedColumn("NEWCOLUMN","[oldcolumn] * 3.289");
