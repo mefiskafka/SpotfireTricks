@@ -1,0 +1,57 @@
+from Spotfire.Dxp.Data import *
+import Spotfire.Dxp.Application.Filters as filters
+import Spotfire.Dxp.Application.Filters.ListBoxFilter
+import Spotfire.Dxp.Application.Filters.CheckBoxFilter
+from Spotfire.Dxp.Application.Filters import FilterTypeIdentifiers
+from System.Collections.Generic import Dictionary
+from System.Reflection import Assembly 
+from Spotfire.Dxp.Data.Collections import *
+from System.Runtime.Serialization import ISerializable
+from System.Collections import IComparer
+
+
+
+#here's the helper function that returns the index of the required filter tab
+def getFilterIndex(tabGroup, table):
+	i = -1
+	for tab in tabGroup:
+		i+=1;
+		if tab.Name == table:
+			return i
+	return i
+
+#here we get a current filter panel reference
+myPanel = Document.ActivePageReference.FilterPanel
+
+#next we get an index of lb tab
+lb_index = getFilterIndex(myPanel.TableGroups, "Laboratory Test Results")
+
+#here we get correct access to the "Category for Lab Test" filter
+categoryFilter = myPanel.TableGroups[lb_index].GetFilter("Category for Lab Test").FilterReference.As[filters.CheckBoxFilter]()
+
+#here we'll check only "CHEMISTRY" values
+for cat in categoryFilter.Values:
+	if cat == "CHEMISTRY":
+		categoryFilter.Check(cat)
+	else:
+		categoryFilter.Uncheck(cat)
+
+#since we also have Lab Test Filters, we also need to reset those
+labTestNameShortFilter = myPanel.TableGroups[lb_index].GetFilter("Lab Test or Examination Short Name").FilterReference.As[filters.ListBoxFilter]()
+labTestNameFilter = myPanel.TableGroups[lb_index].GetFilter("Lab Test or Examination Name").FilterReference.As[filters.ListBoxFilter]()
+
+
+values = Document.Data.Tables['Laboratory Test Results'].Columns['Lab Test or Examination Name'].RowValues.GetEnumerator()
+tests_to_include = []
+for val in values:
+ valp = val.ValidValue
+ if valp not in tests_to_include and valp not in ["SGPT (ALT)", "SGOT(AST)", "Total Bilirubin","Gamma-Glutamyl Transferase (GGT)"]:
+  tests_to_include.Add(val.ValidValue)
+ else:
+  tests_to_include = tests_to_include
+print tests_to_include
+
+
+labTestNameFilter.Reset()
+labTestNameFilter.IncludeAllValues = False
+labTestNameFilter.SetSelection(tests_to_include) 
