@@ -1,0 +1,10 @@
+from Spotfire.Dxp.Application.Visuals import AxisRange
+from Spotfire.Dxp.Application.Visuals import Visualization
+
+for  vis in Application.Document.ActivePageReference.Visuals:
+	try:
+		MyChart = vis.As[Visualization]()		
+		MyChart.XAxis.ZoomRange = AxisRange.DefaultRange
+		MyChart.YAxis.ZoomRange = AxisRange.DefaultRange
+	except:
+		print "No Zoom"
