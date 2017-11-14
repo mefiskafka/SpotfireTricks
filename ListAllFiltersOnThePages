@@ -1,0 +1,58 @@
+from Spotfire.Dxp.Application.Visuals import VisualContent
+from Spotfire.Dxp.Application.Filters import FilterTypeIdentifiers
+from System import Guid
+
+#########################################################
+
+#variablea to hold our data on applied and all filters
+str_all_filters = '<SPAN id=all_filters>'
+str_applied_filters = '<SPAN id=applied_filters>'
+
+#########################################################
+
+#here we are iterating over the all pages in document
+for page in Document.Pages:
+#we need to check whether the page equals one that selected in dropbox
+ if page.Title == currentPage:
+  tableGroup = page.FilterPanel.TableGroups
+#here we go over all the tables in filters
+  for t in tableGroup:
+#if the page is visible for this tab, we create a node for it
+   if (t.Visible == 1):
+    str_applied_filters += "<b>" + t.Name + "</b><br />"
+    str_all_filters += "<b>" + t.Name + "</b><br />"	
+    for filterHandle in t.FilterHandles:
+#adding filters to all filters
+     str_all_filters += filterHandle.FilterReference.Name + " " + filterHandle.FilterReference.TypeId.ToString() + "<br>"
+#if the filter is visible for this tab, we add it to appllied filters
+     if filterHandle.Visible == 1:
+       str_applied_filters += filterHandle.FilterReference.Name + " " + filterHandle.FilterReference.TypeId.ToString() + "<br>"
+
+str_all_filters += "</span>"
+str_applied_filters += "</span>"
+
+##########################################################
+
+#adding all filters on tab
+all = all_filters.As[VisualContent]()
+if(all.HtmlContent is None):
+ all.HtmlContent = " "
+
+if (all.HtmlContent.find("<DIV id=filter_container>") == -1):
+ all.HtmlContent =="<DIV id=filter_container>" + all.HtmlContent
+str_all_filters = str_all_filters.Replace("TypeIdentifier:Spotfire.","– ")
+final = all.HtmlContent.split("<DIV id=filter_container>")[0]+"<DIV id=filter_container>" + str_all_filters + "</DIV>"
+all.HtmlContent=final
+
+###########################################################
+
+#adding applied filters on tab
+applied = applied_filters.As[VisualContent]()
+if(applied.HtmlContent is None):
+ applied.HtmlContent = " "
+
+if (applied.HtmlContent.find("<DIV id=filter_container>") == -1):
+ applied.HtmlContent=="<DIV id=filter_container>" + applied.HtmlContent
+str_applied_filters = str_applied_filters.Replace("TypeIdentifier:Spotfire.","– ")
+final=applied.HtmlContent.split("<DIV id=filter_container>")[0]+"<DIV id=filter_container>" + str_applied_filters + "</DIV>"
+applied.HtmlContent=final
