@@ -1,0 +1,124 @@
+from Spotfire.Dxp.Application.Visuals import *
+from Spotfire.Dxp.Application.Filters import FilterTypeIdentifiers
+from Spotfire.Dxp.Application.Scripting import ScriptDefinition
+from System.Collections.Generic import Dictionary
+from Spotfire.Dxp.Data import *
+import clr
+import Spotfire.Dxp.Application.Filters.ListBoxFilter
+import Spotfire.Dxp.Application.Filters as filters
+
+
+def resolveEnrolledOption(option):
+	scriptDef = clr.Reference[ScriptDefinition]()
+	Document.ScriptManager.TryGetScript(option, scriptDef)
+	params = Dictionary[str, object]()
+	Document.ScriptManager.ExecuteScript(scriptDef.ScriptCode, params)
+
+#we are puling all the selected studies from the listbox
+selectedStudies = Document.Properties['studySelector']
+
+#and finally - set activeStudy property to prevent looped script from execution
+Document.Properties["activeStudy"] = ",".join(selectedStudies)
+
+#I don't want to double-reset filters if they were triggered by selection in filter
+#if not Document.Properties["setByFilterSelection"]:
+
+#nw we need to apply this selection all over the filters on all the pages
+for page in Document.Pages:
+#we need to check whether the page equals one that selected in dropbox
+	tableGroup = page.FilterPanel.TableGroups
+#DM is always first -> so the index is 0 by default. for searching the index by table name, refer to script allFilters
+	studyFilter = tableGroup[0].GetFilter("Study Identifier").FilterReference.As[filters.ListBoxFilter]()
+	studyFilter.IncludeAllValues=False
+	studyFilter.SetSelection(selectedStudies)
+
+selectedStudiesEnrolledOptions = {}
+
+projenrl = None
+
+try:
+	projenrl = Document.Data.Tables["PROJENRL"]
+except Exception:
+	print "no PROJENRL table"
+
+#need to check whether the data on enrollment for the study available
+#if PROJENRL is in data table list then lets look at the data 
+if projenrl is not None:
+	rowCount = projenrl.RowCount
+	rowsToInclude = IndexSet(rowCount, True)
+	cursor = DataValueCursor.CreateFormatted(projenrl.Columns["Study Identifier"])
+	for study in selectedStudies:
+		for row in projenrl.GetRows(rowsToInclude,cursor):		
+			if cursor.CurrentValue == study:
+				selectedStudiesEnrolledOptions[study] = True
+				break
+			else:
+				selectedStudiesEnrolledOptions[study] = False
+
+	#this will happen if all the checked studies are present in PROJENRL
+if False not in selectedStudiesEnrolledOptions.values():
+	resolveEnrolledOption("Enrolled Option 1")
+#this applies when there is no PROJENRL, or no selected studies are present in PROJENRL
+elif True not in selectedStudiesEnrolledOptions.values():
+	resolveEnrolledOption("Enrolled Option 2")
+#here's what happens when we have both present and non-present studiesin PROJENRL - I need to turn on all the lines and show all the data possible
+else:
+	enrollmentLineChart = enrollment.As[LineChart]()
+	enrollmentLineChart.Data.WhereClauseExpression = "[Date] is not null"
+	enrollmentLineChart.FittingModels[2].Enabled = True
+	enrollmentLineChart.FittingModels[3].Enabled = True
+	enrollmentLineChart.XAxis.ZoomRange = AxisRange.DefaultRange
+	enrollmentLineChart.YAxis.ZoomRange = AxisRange.DefaultRange
+
+#let's set sponsors' names on the label
+sponsor_names = []
+
+ts = Document.Data.Tables["TS_PIVOT"]
+tsRowCount = ts.RowCount
+tsRowsToInclude = IndexSet(tsRowCount,True)
+study_cursor = DataValueCursor.CreateFormatted(ts.Columns["Study Identifier"])
+sponsor_cursor = DataValueCursor.CreateFormatted(ts.Columns["Sponsor Name"])
+for row in ts.GetRows(tsRowsToInclude, study_cursor, sponsor_cursor):
+	if study_cursor.CurrentValue in selectedStudies and study_cursor.CurrentValue not in sponsor_names:
+		sponsor_names.append(sponsor_cursor.CurrentValue)
+
+#in the end, lets set current study
+Document.Properties["currentStudySponsor"] = ", ".join(sponsor_names)
+
+#brand new feature - let's create a chart with script
+createScrnFailChart = False
+scrnFailChartExists = False
+
+#check whether we have screen failures in study
+dm = Document.Data.Tables["Demographics"]
+dmRowsToInclude = IndexSet(dm.RowCount,True)
+study_cursor = DataValueCursor.CreateFormatted(dm.Columns["Study Identifier"])
+armcd_cursor = DataValueCursor.CreateFormatted(dm.Columns["ARMCD"])
+for row in dm.GetRows(dmRowsToInclude, study_cursor, armcd_cursor):
+	if study_cursor.CurrentValue in selectedStudies and armcd_cursor.CurrentValue == "SCRNFAIL":
+		createScrnFailChart = True
+
+#check if the chart already created
+for viz in dispPage.Visuals:
+	if viz.Title == "Reason for Screen Failure":		
+		scrnFailChartExists = True
+		break
+
+if not scrnFailChartExists and createScrnFailChart:
+	newChart = dispPage.Visuals.AddDuplicate(sourceViz)
+	newChart.TypeId = VisualTypeIdentifiers.BarChart
+
+	newBarChart = newChart.As[BarChart]()
+	newBarChart.Title = "Reason for Screen Failure"
+	newBarChart.Description = "Reason for Screen Failure"
+	newBarChart.Data.DataTableReference = Document.Data.Tables["Disposition"]
+	newBarChart.XAxis.Expression = "<[Standardized Disposition Term]>"
+	newBarChart.YAxis.Expression = "count() as [#Subjects]"
+	newBarChart.Data.WhereClauseExpression = "[Standardized Disposition Term]='SCREEN FAILURE'"
+	newBarChart.ColorAxis.Expression = "<[Reported Term for the Disposition Event]>"
+	newBarChart.Legend.Visible = True
+elif not createScrnFailChart and scrnFailChartExists:
+	for viz in dispPage.Visuals:
+		if viz.Title == "Reason for Screen Failure":
+			dispPage.Visuals.Remove(viz)
+			break
