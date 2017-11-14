@@ -1,3 +1,6 @@
+based on this post:
+https://community.tibco.com/wiki/example-script-modify-which-columns-are-shown-table-plot
+
 from Spotfire.Dxp.Data import *
 from Spotfire.Dxp.Application.Visuals import TablePlot
 from System.Collections import IComparer
