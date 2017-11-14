@@ -1,0 +1,11 @@
+from Spotfire.Dxp.Data import *
+from System.Collections import IComparer
+from System.Collections.Generic import Dictionary
+from System.Reflection import Assembly 
+from System.Runtime.Serialization import ISerializable
+
+
+values = Document.Data.Tables['DS'].Columns['DSDECOD'].RowValues.GetEnumerator()
+
+for val in values:
+	print val.ValidValue
