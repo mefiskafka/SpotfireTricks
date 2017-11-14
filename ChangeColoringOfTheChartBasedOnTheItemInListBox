@@ -1,0 +1,18 @@
+from Spotfire.Dxp.Application.Visuals import BarChart
+from Spotfire.Dxp.Application.Visuals import PieChart
+from System.Drawing import Color
+
+chart1=viz1.As[BarChart]()
+chart2=viz2.As[PieChart]()
+
+if aecolor == "Standard Toxicity Grade":
+	chart1.ColorAxis.Coloring.Clear()
+	chart1.ColorAxis.Coloring.Apply("ToxGradeSchemeCategorical")
+	chart2.ColorAxis.Coloring.Clear()
+	chart2.ColorAxis.Coloring.Apply("ToxGradeSchemeCategorical")
+elif aecolor == "Serious Event":
+	chart1.ColorAxis.Coloring.Clear()
+	chart1.ColorAxis.Coloring.Apply("SeriousEvent")
+	chart2.ColorAxis.Coloring.Clear()
+	chart2.ColorAxis.Coloring.Apply("SeriousEvent")
+	
