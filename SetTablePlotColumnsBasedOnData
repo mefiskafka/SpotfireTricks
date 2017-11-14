@@ -1,0 +1,45 @@
+from Spotfire.Dxp.Data import *
+from Spotfire.Dxp.Application.Visuals import TablePlot
+from System.Collections import IComparer
+from System.Collections.Generic import Dictionary
+from System.Reflection import Assembly 
+from System.Runtime.Serialization import ISerializable
+
+
+values = Document.Data.Tables['DS'].Columns['DSDECOD'].RowValues.GetEnumerator()
+
+withdrawal_flg = False
+
+for val in values:
+	if val.ValidValue == "WITHDRAWAL BY SUBJECT":
+		withdrawal_flg = True
+
+subjectCharacteristicsTable = Document.Data.Tables["Subject Characteristics"]
+
+subjectCharacteristicsColumns = subjectCharacteristicsTable.Columns
+ 
+if not withdrawal_flg:	
+	subjectCharacteristicsColumns.AddCalculatedColumn("Date of Withdrawal of Main Informed consent","NULL");
+else:
+	for col in subjectCharacteristicsColumns:
+		if col.Name == "WITHDRAWAL BY SUBJECT":
+			col.Name = "Date of Withdrawal of Main Informed consent"
+
+subjectCharacteristicsChartColumns = subjectCharacteristicsChart.As[TablePlot]().TableColumns
+
+subjectCharacteristicsChartColumns.Clear()
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Country"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Study Site"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Subject No."])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Age"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Sex"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Subject Group"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Cancer Type"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Did the subject completed the screening period and entered the treatment period?"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["If No, provide reason for premature discontinuation"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Was the subject re-screened?"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Date of Informed Consent"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Protocol version at inclusion"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Type of Withdrawal"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["Date of Withdrawal of Main Informed consent"])
+subjectCharacteristicsChartColumns.Add(subjectCharacteristicsColumns.Item["ECOG Performance Status at Screening"])
