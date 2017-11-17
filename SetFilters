@@ -1,0 +1,293 @@
+#use this to quickly hide extra filter panels
+
+demographics_filters = ['Study Site Identifier', 'Subject Identifier for the Study', 'Age', 'Sex', 'Race', 'Ethnicity', 'Country', 'Subject Death Flag', 'Description of Planned Arm']
+pp_filters = ["Date/Time of Event or Finding", "Name of Treatment", "Reported Term for the Adverse Event", "Dictionary-Derived Term", "Body System or Organ Class", "Action Taken with Study Treatment", 
+	"Causality", "Outcome of Adverse Event", "Serious Event", "Results in Death", 'Standard Toxicity Grade', "Reported Name of Drug, Med, or Therapy", "Indication"]
+
+for page in Document.Pages:
+	tableGroup = page.FilterPanel.TableGroups
+	for t in tableGroup:
+#Demographics
+		if page.Title == "Demographics":
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+		 	elif t.Name == "Screened/Enrolled":
+		 		t.Visible = 1
+		 		for filterHandle in t.FilterHandles:
+		 			if filterHandle.FilterReference.Name not in ['Metric']:
+		 				filterHandle.Visible = 0
+		 			else:
+		 				filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+#populations
+		if page.Title == "Populations":
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+#Disposition
+		if page.Title == "Disposition":
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Disposition":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in ['Reported Term for the Disposition Event', 'Standardized Disposition Term', 'Category for Disposition Event']:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+#Adverse Events + Summaries
+		if page.Title in ["Adverse Events", "AE Summary Tables (1)", "AE Summary Tables (2)"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Adverse Events":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ['Reported Term for the Adverse Event', 'Dictionary-Derived Term', 'Body System or Organ Class',
+				 												'Severity/Intensity', 'Serious Event', 'Action Taken with Study Treatment', 
+																'Causality', 'Outcome of Adverse Event', 'Results in Death', 'Standard Toxicity Grade']:
+				 		filterHandle.Visible = 0
+			else:
+				t.Visible = 0
+#Patient Profile
+		if page.Title in ["AE (PP)"]:			
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+		 	elif t.Name == "Patient Profile":
+		 		t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in pp_filters:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+#CM + Summaries
+		if page.Title in ["Concomitant Medications", "CM Summary Table"]:
+			
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Concomitant Medications":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["Reported Name of Drug, Med, or Therapy", "Standardized Medication Name", "Indication"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1			
+			else:
+				t.Visible = 0
+#VS Population
+		if page.Title in ["VS Population", "Vital Signs at Baseline"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Vital Signs":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["Vital Signs Test Name", 
+				 												"Reference Range Indicator","Visit Name","Date/Time of Measurements",
+				 												"Study Day of Vital Signs"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+#VS PP
+		if page.Title in ["VS (PP)"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Vital Signs":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["Vital Signs Test Name", "Reference Range Indicator", "Date/Time of Event or Finding",
+				 												"Study Day"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1				
+		 	elif t.Name == "Patient Profile":
+		 		t.Visible = 1
+		 		for filterHandle in t.FilterHandles:
+		 			if filterHandle.FilterReference.Name not in pp_filters:
+		 				filterHandle.Visible = 0
+		 			else:
+		 				filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+		if page.Title in ["ECG Population", "ECG Distribution", "ECG Interpretation"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "ECG Test Results":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["ECG Test or Examination Short Name", "ECG Test or Examination Name", "Reference Range Indicator",
+				 												"Visit Name", "Date/Time of ECG", "Study Day of ECG"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+		if page.Title in ["ECG (PP)"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "ECG Test Results":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["ECG Test or Examination Short Name", "ECG Test or Examination Name", "Reference Range Indicator",
+				 												"Date/Time of Event or Finding", "Study Day"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1				
+		 	elif t.Name == "Patient Profile":
+		 		t.Visible = 1
+		 		for filterHandle in t.FilterHandles:
+		 			if filterHandle.FilterReference.Name not in pp_filters:
+		 				filterHandle.Visible = 0
+		 			else:
+		 				filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+		if page.Title in ["Labs Population", "Abnormal Labs", "Labs 2", "Labs 3"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Laboratory Test Results":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["Lab Test or Examination Short Name", "Lab Test or Examination Name",
+				 												"Category for Lab Test", "Critical Lab Parameter?", "xULN", "Reference Range Indicator",
+				 												"Visit Name", "Date/Time of Specimen Collection",
+				 												"Study Day of Specimen Collection"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1
+			else:	
+				t.Visible = 0
+		if page.Title in ["Labs (PP)"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Laboratory Test Results":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["Lab Test or Examination Short Name", "Lab Test or Examination Name",
+				 												"Category for Lab Test", "Critical Lab Parameter?", "xULN", "Reference Range Indicator",
+				 												"Date/Time of Event or Finding",
+				 												"Study Day"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1				
+		 	elif t.Name == "Patient Profile":
+		 		t.Visible = 1
+		 		for filterHandle in t.FilterHandles:
+		 			if filterHandle.FilterReference.Name not in pp_filters:
+		 				filterHandle.Visible = 0
+		 			else:
+		 				filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+		if page.Title in ["Hy's Law"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Laboratory Test Results":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["Lab Test or Examination Short Name", "Lab Test or Examination Name",
+				 												"Category for Lab Test", "Critical Lab Parameter?", "xULN", "Reference Range Indicator",
+				 												"Date/Time of Specimen Collection", "Study Day"]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1				
+		 	elif t.Name == "Hy's Law":
+		 		t.Visible = 1
+		 		for filterHandle in t.FilterHandles:
+		 			if filterHandle.FilterReference.Name not in ["DILI Category"]:
+		 				filterHandle.Visible = 0
+		 			else:
+		 				filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+		if page.Title in ["Medical History", "MH (PP)"]:
+			if t.Name == "Demographics":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in demographics_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			elif t.Name == "Medical History":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+				 	if filterHandle.FilterReference.Name not in ["Reported Term for the Medical History", 
+				 												"Dictionary-Derived Term",
+				 												"Body System or Organ Class"
+				 												]:
+				 		filterHandle.Visible = 0
+				 	else:
+				 		filterHandle.Visible = 1
+			else:
+				t.Visible = 0
