@@ -1,0 +1,8 @@
+#set the marking from filter selection
+vc = vis.As[VisualContent]()
+dataTable = vc.Data.DataTableReference
+marking = vc.Data.MarkingReference
+
+filteredRows = Document.Data.Filterings["Filtering scheme"].GetSelection(Document.Data.Tables["Demographics"]).AsIndexSet()
+
+marking.SetSelection(RowSelection(filteredRows),dataTable) 
