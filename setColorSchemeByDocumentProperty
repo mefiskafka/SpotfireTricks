@@ -1,0 +1,24 @@
+from Spotfire.Dxp.Application.Visuals import BarChart
+from Spotfire.Dxp.Application.Visuals import PieChart
+from System.Drawing import Color
+
+#we got two charts - Pie Chart and Bar Chart, which we add to the script properties
+#aecolor is a document property, connected to a drop box
+
+barChart=viz1.As[BarChart]()
+pieChart=viz2.As[PieChart]()
+
+#depending on a value of aecolor we're figuring out what color scheme to apply
+#keep in mind, you have to set up color schemes first
+
+if aecolor == "Option 1":
+	barChart.ColorAxis.Coloring.Clear()
+	barChart.ColorAxis.Coloring.Apply("Option1ColorScheme")
+	pieChart.ColorAxis.Coloring.Clear()
+	pieChart.ColorAxis.Coloring.Apply("Option1ColorScheme")
+elif aecolor == "Option 2":
+	barChart.ColorAxis.Coloring.Clear()
+	barChart.ColorAxis.Coloring.Apply("Option2ColorScheme")
+	pieChart.ColorAxis.Coloring.Clear()
+	pieChart.ColorAxis.Coloring.Apply("Option2ColorScheme")
+	
