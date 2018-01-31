@@ -1,0 +1,11 @@
+from Spotfire.Dxp.Application.Visuals import LineChart
+from Spotfire.Dxp.Application.Visuals import AxisRange
+
+#getting the chart from the script properties
+lineChart = chart.As[LineChart]()
+
+#setting the properties
+lineChart.Data.WhereClauseExpression = "[var1] > 250"
+lineChart.FittingModels[2].Enabled = True
+lineChart.XAxis.ZoomRange = AxisRange.DefaultRange
+lineChart.YAxis.ZoomRange = AxisRange.DefaultRange
