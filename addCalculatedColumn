@@ -1,0 +1,5 @@
+from Spotfire.Dxp.Data import CalculatedColumn
+
+#adding a calculated column "newcolumn" from "oldcolumn" to the table "Table 1"
+cols = Document.Data.Tables["Table 1"].Columns
+cols.AddCalculatedColumn("newcolumn","[oldcolumn] * 3.289");
