@@ -1,0 +1,7 @@
+from Spotfire.Dxp.Data import *
+
+table=Document.Data.Tables["BASEBALL"]
+column=table.Columns["AT_BATS"]
+rowValues=column.RowValues.InvalidRows
+if rowValues.Count>0:
+	print column.Name+" column has "+ str(rowValues.Count)+" empty values"
