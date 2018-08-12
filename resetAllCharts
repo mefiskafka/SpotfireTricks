@@ -1,3 +1,5 @@
+#use this to reset zoom sliders of all the charts on the page at once
+
 from Spotfire.Dxp.Application.Visuals import AxisRange
 from Spotfire.Dxp.Application.Visuals import Visualization
 
