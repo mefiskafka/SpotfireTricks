@@ -1,0 +1,38 @@
+#use this to quickly hide extra filter panels
+#specify the list of variables which should be displayed in "generic_filters"
+
+
+generic_filters = ['']
+
+for page in Document.Pages:
+	tableGroup = page.FilterPanel.TableGroups
+	for t in tableGroup:
+#Demographics
+		if page.Title == "Page1":
+			if t.Name == "Table1":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in generic_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+		 	elif t.Name == "Table2":
+		 		t.Visible = 1
+		 		for filterHandle in t.FilterHandles:
+		 			if filterHandle.FilterReference.Name not in ['']:
+		 				filterHandle.Visible = 0
+		 			else:
+		 				filterHandle.Visible = 1
+			else:
+				t.Visible = 0
+#populations
+		if page.Title == "Page2":
+			if t.Name == "Table1":
+				t.Visible = 1
+				for filterHandle in t.FilterHandles:
+					if filterHandle.FilterReference.Name not in generic_filters:
+						filterHandle.Visible = 0
+					else:
+						filterHandle.Visible = 1
+			else:
+				t.Visible = 0
