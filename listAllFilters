@@ -1,3 +1,6 @@
+#you'll have to create some text are first to diaply the filters. 
+#currently the script is set to diaply filters for the page, selected in drop-down
+
 from Spotfire.Dxp.Application.Visuals import VisualContent
 from Spotfire.Dxp.Application.Filters import FilterTypeIdentifiers
 from System import Guid
